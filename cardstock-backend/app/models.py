@@ -2,21 +2,9 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import (
-    Column,
-    Integer,
-    String,
-    DateTime,
-    Boolean,
-    ForeignKey,
-    UniqueConstraint,
-    Enum,
-    Numeric,
-    Text,
-)
+from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy import Enum as SAEnum
 from enum import Enum as PyEnum
 

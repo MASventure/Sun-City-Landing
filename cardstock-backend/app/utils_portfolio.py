@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func, desc
+from sqlalchemy import select
 from .models import Transaction, TransactionType, Card, PriceSnapshot
-from typing import Dict
 
 def compute_portfolio(db: Session, user_id: int):
     # Aggregate positions and cost basis from transactions
@@ -35,7 +34,6 @@ def compute_portfolio(db: Session, user_id: int):
     invested = 0
     value_now = 0
     realized_total = 0
-    from .models import Card
     for card_id, pos in positions.items():
         if pos['qty'] <= 0:
             realized_total += pos['realized']
