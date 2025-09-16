@@ -1,0 +1,31 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cardstock
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+  api:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/cardstock
+      JWT_SECRET: "dev-secret-change-me"
+      JWT_ALG: "HS256"
+      FREE_SCAN_LIMIT: "20"
+      FREE_TRACK_LIMIT: "15"
+      PREMIUM_SCAN_LIMIT: "100000"
+      PREMIUM_TRACK_LIMIT: "100000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/app
+volumes:
+  dbdata:
