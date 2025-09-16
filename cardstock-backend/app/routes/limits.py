@@ -13,27 +13,23 @@ FREE_TRACK_LIMIT = int(os.environ.get("FREE_TRACK_LIMIT", "15"))
 PREMIUM_SCAN_LIMIT = int(os.environ.get("PREMIUM_SCAN_LIMIT", "100000"))
 PREMIUM_TRACK_LIMIT = int(os.environ.get("PREMIUM_TRACK_LIMIT", "100000"))
 
+_POSITIVE_TYPES = (
+    TransactionType.BUY,
+    TransactionType.TRADE_IN,
+    TransactionType.ADJUSTMENT,
+)
+_NEGATIVE_TYPES = (
+    TransactionType.SELL,
+    TransactionType.TRADE_OUT,
+)
+
 def _tracked_cards_count(db: Session, uid: int) -> int:
     """Return how many cards the user currently tracks (net quantity > 0)."""
 
     qty_delta = func.sum(
         case(
-            (
-                Transaction.type.in_(
-                    [
-                        TransactionType.BUY,
-                        TransactionType.TRADE_IN,
-                        TransactionType.ADJUSTMENT,
-                    ]
-                ),
-                Transaction.quantity,
-            ),
-            (
-                Transaction.type.in_(
-                    [TransactionType.SELL, TransactionType.TRADE_OUT]
-                ),
-                -Transaction.quantity,
-            ),
+            (Transaction.type.in_(_POSITIVE_TYPES), Transaction.quantity),
+            (Transaction.type.in_(_NEGATIVE_TYPES), -Transaction.quantity),
             else_=0,
         )
     )
@@ -46,7 +42,7 @@ def _tracked_cards_count(db: Session, uid: int) -> int:
         .subquery()
     )
 
-    count = db.execute(select(func.count()).select_from(tracked_cards)).scalar()
+    count = db.scalar(select(func.count()).select_from(tracked_cards))
     return int(count or 0)
 
 
