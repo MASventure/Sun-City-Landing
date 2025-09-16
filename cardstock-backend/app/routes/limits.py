@@ -1,9 +1,9 @@
 import os
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func
+from sqlalchemy import select, func, case
 from ..db import get_db
-from ..models import User, PlanTier, Transaction
+from ..models import User, PlanTier, Transaction, TransactionType
 from ..security import get_current_user_id
 
 router = APIRouter(prefix="/v1/me", tags=["limits"])
@@ -13,13 +13,57 @@ FREE_TRACK_LIMIT = int(os.environ.get("FREE_TRACK_LIMIT", "15"))
 PREMIUM_SCAN_LIMIT = int(os.environ.get("PREMIUM_SCAN_LIMIT", "100000"))
 PREMIUM_TRACK_LIMIT = int(os.environ.get("PREMIUM_TRACK_LIMIT", "100000"))
 
+def _tracked_cards_count(db: Session, uid: int) -> int:
+    """Return how many cards the user currently tracks (net quantity > 0)."""
+
+    qty_delta = func.sum(
+        case(
+            (
+                Transaction.type.in_(
+                    [
+                        TransactionType.BUY,
+                        TransactionType.TRADE_IN,
+                        TransactionType.ADJUSTMENT,
+                    ]
+                ),
+                Transaction.quantity,
+            ),
+            (
+                Transaction.type.in_(
+                    [TransactionType.SELL, TransactionType.TRADE_OUT]
+                ),
+                -Transaction.quantity,
+            ),
+            else_=0,
+        )
+    )
+
+    tracked_cards = (
+        select(Transaction.card_id)
+        .where(Transaction.user_id == uid)
+        .group_by(Transaction.card_id)
+        .having(qty_delta > 0)
+        .subquery()
+    )
+
+    count = db.execute(select(func.count()).select_from(tracked_cards)).scalar()
+    return int(count or 0)
+
+
 @router.get("/limits")
 def get_limits(db: Session = Depends(get_db), uid: int = Depends(get_current_user_id)):
     user = db.get(User, uid)
-    if user.plan_tier == "PREMIUM":
-        return {"scans_remaining": PREMIUM_SCAN_LIMIT, "track_limit": PREMIUM_TRACK_LIMIT, "tracked_count": 0}
-    else:
-        # tracked_count approximated: unique card_ids in transactions with net qty > 0
-        # (simple version; precise count comes from positions calc)
-        tracked_count = db.execute(select(func.count(func.distinct(Transaction.card_id))).where(Transaction.user_id==uid)).scalar() or 0
-        return {"scans_remaining": FREE_SCAN_LIMIT, "track_limit": FREE_TRACK_LIMIT, "tracked_count": int(tracked_count)}
+    tracked_count = _tracked_cards_count(db, uid)
+
+    if user and user.plan_tier == PlanTier.PREMIUM:
+        return {
+            "scans_remaining": PREMIUM_SCAN_LIMIT,
+            "track_limit": PREMIUM_TRACK_LIMIT,
+            "tracked_count": tracked_count,
+        }
+
+    return {
+        "scans_remaining": FREE_SCAN_LIMIT,
+        "track_limit": FREE_TRACK_LIMIT,
+        "tracked_count": tracked_count,
+    }
