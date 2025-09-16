@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional, List, Literal
 from datetime import datetime
 
@@ -25,6 +25,8 @@ class TransactionIn(BaseModel):
     notes: Optional[str] = None
 
 class TransactionOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     card_id: int
     type: str

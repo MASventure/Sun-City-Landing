@@ -28,4 +28,4 @@ def create_transaction(payload: TransactionIn, db: Session = Depends(get_db), ui
     db.add(tx)
     db.commit()
     db.refresh(tx)
-    return TransactionOut.model_validate(tx.__dict__)
+    return TransactionOut.model_validate(tx)
