@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sun City Landing</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <header class="hero" id="hero">
+      <div class="hero__overlay"></div>
+      <div class="hero__content">
+        <h1 class="hero__title">Welcome to Sun City Landing</h1>
+        <p class="hero__subtitle">
+          Discover luxury living with sun-soaked amenities and vibrant community life.
+        </p>
+        <a class="button button--primary" href="#tour-request">Book a Tour</a>
+      </div>
+    </header>
+
+    <nav class="navigation" aria-label="Primary navigation">
+      <ul class="navigation__menu" id="main-menu">
+        <li class="navigation__item"><a href="#amenities">Amenities</a></li>
+        <li class="navigation__item"><a href="#residences">Residences</a></li>
+        <li class="navigation__item"><a href="#neighborhood">Neighborhood</a></li>
+        <li class="navigation__item"><a href="#tour-request">Tour Request</a></li>
+      </ul>
+      <button class="navigation__toggle" id="menu-toggle" aria-controls="main-menu" aria-expanded="false">
+        Menu
+      </button>
+    </nav>
+
+    <main>
+      <section class="section" id="amenities">
+        <div class="section__header">
+          <h2 class="section__title">Signature Amenities</h2>
+          <p class="section__subtitle">Everything you need to relax, recharge, and connect.</p>
+        </div>
+        <div class="feature-grid" id="amenities-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <section class="section section--alternate" id="residences">
+        <div class="section__header">
+          <h2 class="section__title">Residences Designed for Sun Seekers</h2>
+          <p class="section__subtitle">
+            Choose from studio, one-bedroom, and penthouse layouts with panoramic views.
+          </p>
+        </div>
+        <div class="residence-highlights">
+          <article class="residence-card" id="residence-studio">
+            <h3 class="residence-card__title">Studio Retreat</h3>
+            <p class="residence-card__description">
+              Cozy layouts with smart storage and private balconies perfect for morning coffee.
+            </p>
+          </article>
+          <article class="residence-card" id="residence-one-bedroom">
+            <h3 class="residence-card__title">One-Bedroom Oasis</h3>
+            <p class="residence-card__description">
+              Open-concept living spaces with floor-to-ceiling windows that flood rooms with sunlight.
+            </p>
+          </article>
+          <article class="residence-card" id="residence-penthouse">
+            <h3 class="residence-card__title">Penthouse Sky Deck</h3>
+            <p class="residence-card__description">
+              Expansive terraces, private lounges, and access to the rooftop infinity pool.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="neighborhood">
+        <div class="section__header">
+          <h2 class="section__title">Neighborhood Highlights</h2>
+          <p class="section__subtitle">
+            Walkable blocks filled with cafés, galleries, and nightlife just steps away.
+          </p>
+        </div>
+        <ul class="neighborhood-list" id="neighborhood-highlights">
+          <li class="neighborhood-list__item">Sunset Promenade and weekly artisan market.</li>
+          <li class="neighborhood-list__item">Cyclist-friendly waterfront trail system.</li>
+          <li class="neighborhood-list__item">Award-winning culinary scene featuring coastal cuisine.</li>
+        </ul>
+      </section>
+
+      <section class="section section--accent" id="tour-request">
+        <div class="section__header">
+          <h2 class="section__title">Request a Personal Tour</h2>
+          <p class="section__subtitle">
+            Complete the form and our concierge will reach out within 24 hours to schedule your visit.
+          </p>
+        </div>
+        <form class="form" id="tour-request-form" novalidate>
+          <div class="form__field">
+            <label class="form__label" for="visitor-name">Full Name</label>
+            <input class="form__input" id="visitor-name" name="name" type="text" required />
+            <p class="form__error" id="error-name" role="alert"></p>
+          </div>
+          <div class="form__field">
+            <label class="form__label" for="visitor-email">Email</label>
+            <input class="form__input" id="visitor-email" name="email" type="email" required />
+            <p class="form__error" id="error-email" role="alert"></p>
+          </div>
+          <div class="form__field">
+            <label class="form__label" for="visitor-phone">Phone</label>
+            <input class="form__input" id="visitor-phone" name="phone" type="tel" required />
+            <p class="form__error" id="error-phone" role="alert"></p>
+          </div>
+          <div class="form__field">
+            <label class="form__label" for="preferred-date">Preferred Tour Date</label>
+            <input class="form__input" id="preferred-date" name="preferred_date" type="date" required />
+            <p class="form__error" id="error-preferred-date" role="alert"></p>
+          </div>
+          <div class="form__field">
+            <label class="form__label" for="visitor-message">Message</label>
+            <textarea class="form__input form__input--multiline" id="visitor-message" name="message" rows="4"></textarea>
+          </div>
+          <button class="button button--secondary" type="submit">Submit Request</button>
+          <p class="form__success" id="form-success" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer" id="site-footer">
+      <div class="footer__content">
+        <p class="footer__text">&copy; <span id="current-year"></span> Sun City Landing. All rights reserved.</p>
+        <nav class="footer__nav" aria-label="Footer navigation">
+          <a class="footer__link" href="#amenities">Amenities</a>
+          <a class="footer__link" href="#tour-request">Tour Request</a>
+          <a class="footer__link" href="mailto:hello@suncitylanding.com">Contact</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>
